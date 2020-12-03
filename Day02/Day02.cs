@@ -19,10 +19,10 @@ namespace AdventOfCode_2020.Week01
             IgnoreDirectInput();
         }
 
-        protected override string Solve(IEnumerable<string> inputs)
+        protected override string Solve(IEnumerable<string> inputLine)
         {
             var valid = 0;
-            foreach (var input in inputs)
+            foreach (var input in inputLine)
             {
                 var parameters = input.GetParameters();
                 var password = input.GetPassword();
@@ -34,10 +34,10 @@ namespace AdventOfCode_2020.Week01
             return $"There are {valid} valid passwords using {nameof(RepeatedCharacterRequirment)}.";
         }
 
-        protected override string Solve2(IEnumerable<string> inputs)
+        protected override string Solve2(IEnumerable<string> inputLine)
         {
             var valid = 0;
-            foreach (var input in inputs)
+            foreach (var input in inputLine)
             {
                 var parameters = input.GetParameters();
                 var adjustedParameters = parameters with { FirstNumber = parameters.FirstNumber - 1, SecondNumber = parameters.SecondNumber - 1 };

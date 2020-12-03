@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode_2020.Common.DataStructures;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
@@ -49,6 +50,9 @@ namespace AdventOfCode_2020.Week01
         }
 
         protected override string Solve2(IEnumerable<string> inputs)
+        {
+            return null;
+        }
     }
 
     public static class InputStringParsers

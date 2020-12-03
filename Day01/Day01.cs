@@ -12,12 +12,18 @@ namespace AdventOfCode_2020.Week01
         public Day01(IServiceProvider serviceProvider, ILogger<Day01> logger)
             : base(serviceProvider, logger)
         {
-            DirectInput = @"1721
-979
-366
-299
-675
-1456".Split("\r\n");
+            DirectInput = 
+@"
+
+1721
+ 979
+ 366
+ 299
+ 675
+1456
+
+
+".Split("\r\n");
 
             IgnoreDirectInput();
         }
@@ -39,7 +45,7 @@ namespace AdventOfCode_2020.Week01
                 if (result != default)
                 {
                     var (first, second) = result;
-                    return $"Found the values {value}, {first}, {second} have a product of {value * first * second}.";
+                    return $"Found the values {value:N0}, {first:N0}, {second:N0} have a product of {value * first * second:N0}.";
                 }
             }
 

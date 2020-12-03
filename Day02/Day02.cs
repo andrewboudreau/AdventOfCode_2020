@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
+    public record Parameters(char Character, int FirstNumber, int SecondNumber);
+
     public class Day02 : Day00
     {
         public Day02(IServiceProvider serviceProvider, ILogger<Day02> logger)
             : base(serviceProvider, logger)
         {
-            DirectInput =
-@"1-3 a: abcde
+            DirectInput = @"1-3 a: abcde
 1-3 b: cdefg
 2-9 c: ccccccccc".Split("\r\n");
 
@@ -24,49 +24,58 @@ namespace AdventOfCode_2020.Week01
             var valid = 0;
             foreach (var input in inputs)
             {
-                var (Requirement, Password) = input.ToPolicy();
-                logger.LogInformation($"{Requirement} on Password: {Password}.");
+                var parameters = input.GetParameters();
+                var password = input.GetPassword();
 
-                valid += Requirement.IsValid(Password) ? 1 : 0;
+                logger.LogInformation($"{parameters} on Password: {password}.");
+                valid += RepeatedCharacterRequirment(parameters, password);
             }
 
-            return $"There are {valid} valid passwords.";
+            return $"There are {valid} valid passwords using {nameof(RepeatedCharacterRequirment)}.";
         }
 
         protected override string Solve2(IEnumerable<string> inputs)
         {
-            return null;
-        }
-    }
+            var valid = 0;
+            foreach (var input in inputs)
+            {
+                var parameters = input.GetParameters();
+                var adjustedParameters = parameters with { FirstNumber = parameters.FirstNumber - 1, SecondNumber = parameters.SecondNumber - 1 };
 
-    public record RepeatedCharacterRequirment(char character, int min, int max)
-    {
-        public bool IsValid(string password)
+                //logger.LogInformation($"{parametersWithOffset} on Password: {input.GetPassword()}.");
+                valid += CharacterPositionRequirment(adjustedParameters, input.GetPassword());
+            }
+
+            return $"There are {valid} valid passwords using {nameof(CharacterPositionRequirment)}.";
+        }
+
+        public static int RepeatedCharacterRequirment(Parameters parameters, string password)
         {
             var count = 0;
             for (var i = 0; i < password.Length; i++)
             {
-                if (password[i] == character)
+                if (password[i] == parameters.Character)
                 {
                     count++;
                 }
             }
 
-            return min <= count && count <= max;
+            return (parameters.FirstNumber <= count && count <= parameters.SecondNumber) ? 1 : 0;
         }
-    }
 
-    public static class StringExtensions
-    {
-        public static (RepeatedCharacterRequirment Requirement, string Password) ToPolicy(this string input)
+        public static int CharacterPositionRequirment(Parameters parameters, string password)
         {
-            var policy = input.Split(':')[0];
-            var password = input.Split(':')[1].Trim();
+            if (password[parameters.FirstNumber] == password[parameters.SecondNumber])
+            {
+                return 0;
+            }
 
-            var range = policy.Split(' ')[0].Split('-').Select(int.Parse).ToList();
-            var character = policy.Split(' ')[1].Single();
+            if (password[parameters.FirstNumber] == parameters.Character || password[parameters.SecondNumber] == parameters.Character)
+            {
+                return 1;
+            }
 
-            return (new RepeatedCharacterRequirment(character, range[0], range[1]), password);
+            return 0;
         }
     }
 }

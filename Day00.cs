@@ -99,7 +99,7 @@ namespace AdventOfCode_2020
             return "N/A";
         }
 
-        private static string fileGuid = Guid.NewGuid().ToString("N").Substring(0, 3);
+        private static readonly string fileGuid = Guid.NewGuid().ToString("N").Substring(0, 3);
 
         static protected string SaveToFile(string msg)
         {

@@ -2,7 +2,7 @@
 
 namespace AdventOfCode_2020.Week01
 {
-    public static class InputStringParserExtensions
+    public static partial class InputStringParsers
     {
         public static Parameters GetParameters(this string input)
         {   // {first}-{second} {character}: {password} 

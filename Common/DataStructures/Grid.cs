@@ -2,29 +2,32 @@
 
 namespace AdventOfCode_2020.Common.DataStructures
 {
-    public record Position(int X, int Y);
-
-    public record Tile(Position Position, TileType Type)
+    public record Position(int X, int Y)
     {
-        public Tile(int x, int y, TileType type)
-            : this(new Position(x, y), type)
+        public static Position Zero { get; internal set; } = new Position(0, 0);
+    }
+
+    public record Tile(Position Position, string Description)
+    {
+        public Tile(int x, int y, string description)
+            : this(new Position(x, y), description)
         {
         }
     };
 
-    public record TileType(string Name);
-
     /// <summary>
     /// A 2D rectangle shaped collection of tiles.
     /// </summary>
-    /// <typeparam name="TTile">The type of map tile. Contains any tile specific data.</typeparam>
-    public class Map<TTile>
+    /// <typeparam name="TTile">The type of grid tile. Contains any tile specific data.</typeparam>
+    public class Grid<TTile>
     {
         private readonly int width;
         private readonly TTile[] tiles;
+        private readonly Position start;
+
         private Position current;
 
-        public Map(int width, TTile[] tiles)
+        public Grid(int width, TTile[] tiles)
         {
             if (tiles.IsEmpty())
             {
@@ -38,7 +41,9 @@ namespace AdventOfCode_2020.Common.DataStructures
 
             this.width = width;
             this.tiles = tiles;
-            current = new Position(0, 0);
+
+            current = Position.Zero;
+            start = Position.Zero;
         }
 
         public TTile this[int x, int y]
@@ -85,6 +90,17 @@ namespace AdventOfCode_2020.Common.DataStructures
             };
 
             return this[current];
+        }
+
+        public TTile MoveTo(Position position)
+        {
+            current = position;
+            return this[current];
+        }
+
+        public void MoveToStart()
+        {
+            MoveTo(start);
         }
 
         public TTile Current => this[current];

@@ -6,15 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
-    public record Tree(Position Position)
-        : Day3Tile(1, Position, nameof(Tree));
-
-    public record OpenSquare(Position Position)
-        : Day3Tile(0, Position, nameof(OpenSquare));
-
-    public record Day3Tile(int TreeCount, Position Position, string Description)
-        : Tile(Position, Description);
-
     public class Day03 : Day00
     {
         public Day03(IServiceProvider serviceProvider, ILogger<Day03> logger)
@@ -77,6 +68,9 @@ namespace AdventOfCode_2020.Week01
             return $"{product} is the product of the tree counts for the {slopes.Length} slopes.";
         }
 
+        /// <summary>
+        /// Same solution but more LINQ.
+        /// </summary>
         protected static int Linq_Solve2(Grid<Day3Tile> grid, Position[] slopes)
         {
             int CountTrees(Position slope)
@@ -90,4 +84,13 @@ namespace AdventOfCode_2020.Week01
             return product;
         }
     }
+
+    public record Tree(Position Position)
+        : Day3Tile(1, Position, nameof(Tree));
+
+    public record OpenSquare(Position Position)
+        : Day3Tile(0, Position, nameof(OpenSquare));
+
+    public record Day3Tile(int TreeCount, Position Position, string Description)
+        : Tile(Position, Description);
 }

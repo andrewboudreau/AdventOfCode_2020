@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode_2020.Common.DataStructures
 {
@@ -16,6 +18,25 @@ namespace AdventOfCode_2020.Common.DataStructures
                 grid.MoveBy(slope);
             }
             while (grid.Current != default);
+        }
+
+        public static Grid<T> ToGrid<T>(this IEnumerable<string> inputs, Func<Position, char, T> tileFactory)
+            where T : Tile
+        {
+            var width = inputs.First().Length;
+
+            var tiles = new List<T>();
+            var index = 0;
+
+            foreach (var tile in inputs.SelectMany(x => x))
+            {
+                var position = new Position(index % width, index / width);
+                tiles.Add(tileFactory(position, tile));
+
+                index++;
+            }
+
+            return new Grid<T>(width, tiles.ToArray());
         }
     }
 }

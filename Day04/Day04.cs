@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using AdventOfCode_2020.Common.DataStructures;
 using Microsoft.Extensions.Logging;
 

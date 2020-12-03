@@ -31,6 +31,8 @@ namespace AdventOfCode_2020
             DirectInputSingleLineParse = defaultLineParser;
         }
 
+        public virtual string Title => $"Day {Day:00}";
+
         public int Day => int.Parse(GetType().Name.ToLowerInvariant().Replace("day", ""));
 
         public virtual string InputFile => $@"Day{Day:00}\\{DefaultFileName}";
@@ -52,7 +54,7 @@ namespace AdventOfCode_2020
             }
             else
             {
-                var inputFile = Directory.EnumerateFiles(Directory.GetCurrentDirectory(),InputFile, new EnumerationOptions() { RecurseSubdirectories = true }).FirstOrDefault();
+                var inputFile = Directory.EnumerateFiles(Directory.GetCurrentDirectory(), InputFile, new EnumerationOptions() { RecurseSubdirectories = true }).FirstOrDefault();
                 logger.LogInformation($"Using input file {inputFile}");
                 using var file = new StreamReader(inputFile);
 

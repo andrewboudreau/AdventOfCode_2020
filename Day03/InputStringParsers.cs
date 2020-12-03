@@ -20,9 +20,7 @@ namespace AdventOfCode_2020.Week01
                 };
             }
 
-            var width = inputs.First().Length;
             var grid = inputs.ToGrid(tileFactory);
-
             return grid;
         }
     }

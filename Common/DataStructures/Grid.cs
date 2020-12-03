@@ -18,16 +18,16 @@ namespace AdventOfCode_2020.Common.DataStructures
     /// <summary>
     /// A 2D rectangle shaped collection of tiles.
     /// </summary>
-    /// <typeparam name="TTile">The type of grid tile. Contains any tile specific data.</typeparam>
-    public class Grid<TTile>
+    /// <typeparam name="T">The type of grid tile. Contains any tile specific data.</typeparam>
+    public class Grid<T>
     {
         private readonly int width;
-        private readonly TTile[] tiles;
+        private readonly T[] tiles;
         private readonly Position start;
 
         private Position current;
 
-        public Grid(int width, TTile[] tiles)
+        public Grid(int width, T[] tiles)
         {
             if (tiles.IsEmpty())
             {
@@ -46,7 +46,7 @@ namespace AdventOfCode_2020.Common.DataStructures
             start = Position.Zero;
         }
 
-        public TTile this[int x, int y]
+        public T this[int x, int y]
         {
             get
             {
@@ -54,7 +54,7 @@ namespace AdventOfCode_2020.Common.DataStructures
             }
         }
 
-        public TTile this[Position position]
+        public T this[Position position]
         {
             get
             {
@@ -81,7 +81,7 @@ namespace AdventOfCode_2020.Common.DataStructures
             }
         }
 
-        public TTile MoveBy(Position position)
+        public T MoveBy(Position position)
         {
             current = current with
             {
@@ -92,7 +92,7 @@ namespace AdventOfCode_2020.Common.DataStructures
             return this[current];
         }
 
-        public TTile MoveTo(Position position)
+        public T MoveTo(Position position)
         {
             current = position;
             return this[current];
@@ -103,6 +103,6 @@ namespace AdventOfCode_2020.Common.DataStructures
             MoveTo(start);
         }
 
-        public TTile Current => this[current];
+        public T Current => this[current];
     }
 }

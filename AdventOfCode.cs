@@ -12,7 +12,7 @@ namespace AdventOfCode_2020
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay = typeof(Day04);
+        public static Type SolutionForDay = typeof(Day03);
 
         public static ILoggerFactory LogFactory;
 
@@ -25,7 +25,7 @@ namespace AdventOfCode_2020
             var (front, back) = (Console.ForegroundColor, Console.BackgroundColor);
 
             var day = (Day00)serviceProvider.GetRequiredService(SolutionForDay);
-
+            Console.WriteLine(Figgle.FiggleFonts.Doom.Render(day.Title));
 
             var part1 = day.Solve();
             Console.BackgroundColor = ConsoleColor.DarkGray;

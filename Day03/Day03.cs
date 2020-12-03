@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
+    /// <summary>
+    /// Solutions for https://adventofcode.com/2020/day/3 parts 1 and 2.
+    /// </summary>
     public class Day03 : Day00
     {
         public Day03(IServiceProvider serviceProvider, ILogger<Day03> logger)

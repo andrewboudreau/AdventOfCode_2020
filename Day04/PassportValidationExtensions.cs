@@ -5,18 +5,25 @@ namespace AdventOfCode_2020.Week01
 {
     public static class PassportValidationExtensions
     {
-        private static readonly char[] HexCharacters = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+        private static readonly char[] PassportCharacters = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+        private static readonly string[] EyeColors = new[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+
+        public static bool IsBetween(this int value, int min, int max)
+        {
+            return value >= min && value <= max;
+        }
 
         public static bool IsBetween(this int value, (int Min, int Max) range)
         {
-            return value >= range.Min && value <= range.Max;
+            return IsBetween(value, range.Min, range.Max);
         }
 
-        public static bool IsYearBetween(this Field field, int start, int end)
+        public static bool IsYearBetween(this Field field, int min, int max)
         {
             if (int.TryParse(field.Value, out var year))
             {
-                return year >= start && year <= end;
+                return year.IsBetween(min, max);
             }
 
             return false;
@@ -53,13 +60,12 @@ namespace AdventOfCode_2020.Week01
             }
 
             return field.Value.Skip(1)
-                .All(HexCharacters.Contains);
+                .All(PassportCharacters.Contains);
         }
 
         public static bool IsEyeColor(this Field field)
         {
-            var colors = new[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
-            return colors.Contains(field.Value);
+            return EyeColors.Contains(field.Value);
         }
 
         public static bool IsPassportId(this Field field)

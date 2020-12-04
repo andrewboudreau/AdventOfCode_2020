@@ -6,6 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
+    // Day03 Domain
+    public record Tree(Position Position) : GroundTile(1, Position, nameof(Tree));
+    public record OpenSquare(Position Position) : GroundTile(0, Position, nameof(OpenSquare));
+    public record GroundTile(int TreeCount, Position Position, string Description) : Tile(Position, Description);
+
     /// <summary>
     /// Solutions for https://adventofcode.com/2020/day/3 parts 1 and 2.
     /// </summary>
@@ -32,10 +37,10 @@ namespace AdventOfCode_2020.Week01
         protected override string Solve(IEnumerable<string> inputs)
         {
             // start by counting all the trees you would encounter for the slope right 3, down 1.
-            var grid = inputs.ToDay3Grid();
+            var map = inputs.ToMapOfTrees();
             var slope = new Position(3, 1);
 
-            var trees = grid
+            var trees = map
                 .TilesAlongSlope(slope)
                 .Sum(x => x.TreeCount);
 
@@ -44,7 +49,7 @@ namespace AdventOfCode_2020.Week01
 
         protected override string Solve2(IEnumerable<string> inputs)
         {
-            var grid = inputs.ToDay3Grid();
+            var map = inputs.ToMapOfTrees();
 
             // Slopes from adventofcode.com/2020/day/3#part2
             var slopes = new Position[] {
@@ -58,12 +63,12 @@ namespace AdventOfCode_2020.Week01
             var product = 1;
             foreach (var slope in slopes)
             {
-                var trees = grid
+                var trees = map
                     .TilesAlongSlope(slope)
                     .Sum(x => x.TreeCount);
 
                 product *= trees;
-                grid.MoveToStart();
+                map.MoveToStart();
 
                 logger.LogInformation($"{trees} trees found on {slope}.");
             }
@@ -74,12 +79,12 @@ namespace AdventOfCode_2020.Week01
         /// <summary>
         /// Same solution but more LINQ.
         /// </summary>
-        protected static int Linq_Solve2(Grid<Day3Tile> grid, Position[] slopes)
+        protected static int Linq_Solve2(Grid<GroundTile> map, Position[] slopes)
         {
             int CountTrees(Position slope)
             {
-                var total = grid.TilesAlongSlope(slope).Sum(x => x.TreeCount);
-                grid.MoveToStart();
+                var total = map.TilesAlongSlope(slope).Sum(x => x.TreeCount);
+                map.MoveToStart();
                 return total;
             }
 
@@ -87,13 +92,4 @@ namespace AdventOfCode_2020.Week01
             return product;
         }
     }
-
-    public record Tree(Position Position)
-        : Day3Tile(1, Position, nameof(Tree));
-
-    public record OpenSquare(Position Position)
-        : Day3Tile(0, Position, nameof(OpenSquare));
-
-    public record Day3Tile(int TreeCount, Position Position, string Description)
-        : Tile(Position, Description);
 }

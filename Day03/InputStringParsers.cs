@@ -7,20 +7,21 @@ namespace AdventOfCode_2020.Week01
 {
     public static partial class InputStringParsers
     {
-        public static Grid<Day3Tile> ToDay3Grid(this IEnumerable<string> inputs)
-        {
-            static Day3Tile tileFactory(Position position, char character)
-            {
-                return character switch
-                {
-                    '.' => new OpenSquare(position),
-                    '#' => new Tree(position),
-                    _ => throw new InvalidOperationException($"invalid Tile with value '{character}'.")
-                };
-            }
 
-            var grid = inputs.ToGrid(tileFactory);
+        public static Grid<GroundTile> ToMapOfTrees(this IEnumerable<string> inputs)
+        {
+            var grid = inputs.ToGrid(TileFactory);
             return grid;
+        }
+
+        private static GroundTile TileFactory(Position position, char character)
+        {
+            return character switch
+            {
+                '.' => new OpenSquare(position),
+                '#' => new Tree(position),
+                _ => throw new InvalidOperationException($"invalid Tile with value '{character}'.")
+            };
         }
     }
 }

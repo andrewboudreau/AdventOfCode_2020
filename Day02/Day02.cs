@@ -5,8 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
+    // Day02 Domain
     public record Parameters(char Character, int FirstNumber, int SecondNumber);
 
+    /// <summary>
+    /// Solutions to https://adventofcode.com/2020/day/2
+    /// </summary>
     public class Day02 : Day00
     {
         public Day02(IServiceProvider serviceProvider, ILogger<Day02> logger)
@@ -39,10 +43,10 @@ namespace AdventOfCode_2020.Week01
             var valid = 0;
             foreach (var input in inputLine)
             {
+                // Note: Be careful; Toboggan Corporate Policies have no concept of "index zero"!
                 var parameters = input.GetParameters();
                 var adjustedParameters = parameters with { FirstNumber = parameters.FirstNumber - 1, SecondNumber = parameters.SecondNumber - 1 };
 
-                //logger.LogInformation($"{parametersWithOffset} on Password: {input.GetPassword()}.");
                 valid += CharacterPositionRequirment(adjustedParameters, input.GetPassword());
             }
 

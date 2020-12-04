@@ -15,7 +15,9 @@ namespace AdventOfCode_2020.Common
 
         public class CustomConsoleLogger : ILogger
         {
+#pragma warning disable IDE0052 // Remove unread private members
             private readonly string categoryName;
+#pragma warning restore IDE0052 // Remove unread private members
 
             public CustomConsoleLogger(string categoryName)
             {
@@ -29,6 +31,7 @@ namespace AdventOfCode_2020.Common
                     return;
                 }
 
+                var (fore, back) = (Console.ForegroundColor, Console.BackgroundColor);
                 if (logLevel == LogLevel.Critical)
                 {
                     Console.BackgroundColor = ConsoleColor.Black;
@@ -36,6 +39,9 @@ namespace AdventOfCode_2020.Common
                 }
 
                 Console.WriteLine($"{logLevel.ToString().Substring(0, 4)}: {formatter(state, exception)}");
+
+                Console.ForegroundColor = fore;
+                Console.BackgroundColor = back;
             }
 
             public bool IsEnabled(LogLevel logLevel)

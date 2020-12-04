@@ -12,12 +12,17 @@ namespace AdventOfCode_2020
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay = typeof(Day03);
+        public static Type SolutionForDay { get; set; } = typeof(Day05);
 
-        public static ILoggerFactory LogFactory;
+        public static ILoggerFactory LogFactory { get; private set; }
 
         public static void Main(string[] args)
         {
+            if(args.Any())
+            {
+                Console.WriteLine(string.Join(" ",args));
+            }
+
             using var scope = ConfigureServices().CreateScope();
             var serviceProvider = scope.ServiceProvider;
 

@@ -12,18 +12,12 @@ namespace AdventOfCode_2020.Week01
         public Day01(IServiceProvider serviceProvider, ILogger<Day01> logger)
             : base(serviceProvider, logger)
         {
-            DirectInput = 
-@"
-
-1721
+            DirectInput = @"1721
  979
  366
  299
  675
-1456
-
-
-".Split("\r\n");
+1456".Split("\r\n");
 
             IgnoreDirectInput();
         }
@@ -52,7 +46,7 @@ namespace AdventOfCode_2020.Week01
             throw new InvalidOperationException("Could not solve.");
         }
 
-        private (int, int) FindTwoNumbersThatSumToValue(HashSet<int> values, int target = 2020)
+        private static (int, int) FindTwoNumbersThatSumToValue(HashSet<int> values, int target = 2020)
         {
             foreach (var value in values)
             {

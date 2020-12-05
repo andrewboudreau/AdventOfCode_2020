@@ -65,7 +65,6 @@ namespace AdventOfCode_2020.Common.DataStructures
 
                 if (position.Y >= tiles.Length / width)
                 {
-                    //var ex = new InvalidOperationException($"Vertical position too large. Rows: {tiles.Length / width} Width: {width} Length: {tiles.Length} {position}");
                     return default;
                 }
 

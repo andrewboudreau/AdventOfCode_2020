@@ -86,6 +86,8 @@ namespace AdventOfCode_2020
             {
                 throw new InvalidOperationException($"Expected known correct answer '{expected}' but returned '{actual}'");
             }
+
+            logger.LogDebug($"Validation Passed! Expected:{expected} Actual:{actual}.");
         }
 
         protected abstract string Solve(IEnumerable<string> inputs);

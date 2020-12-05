@@ -32,6 +32,11 @@ namespace AdventOfCode_2020.Common
         {
             return new HashSet<int>(items.Select(int.Parse));
         }
+
+        public static IEnumerable<T> SkipFirst<T>(this IEnumerable<T> items)
+        {
+            return items.Skip(1);
+        }
     }
 
     public static partial class EnumerableExtensions

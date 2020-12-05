@@ -28,10 +28,10 @@ namespace AdventOfCode_2020.Common.DataStructures
             var tiles = new List<T>();
             var index = 0;
 
-            foreach (var tile in inputs.SelectMany(x => x))
+            foreach (var tileType in inputs.SelectMany(x => x))
             {
                 var position = new Position(index % width, index / width);
-                tiles.Add(tileFactory(position, tile));
+                tiles.Add(tileFactory(position, tileType));
 
                 index++;
             }

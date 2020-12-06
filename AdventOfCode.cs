@@ -18,9 +18,9 @@ namespace AdventOfCode_2020
 
         public static void Main(string[] args)
         {
-            if(args.Any())
+            if (args.Any())
             {
-                Console.WriteLine(string.Join(" ",args));
+                Console.WriteLine(string.Join(" ", args));
             }
 
             using var scope = ConfigureServices().CreateScope();

@@ -1,18 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode_2020.Week01;
 
 namespace AdventOfCode_2020
 {
     public static partial class InputStringParsers
     {
-        public static IEnumerable<object> ToDay06(this IEnumerable<string> inputs)
+        public static IEnumerable<PassengerGroup> ToPassengerGroups(this IEnumerable<string> inputs)
         {
-            foreach (var item in inputs)
+            var passengers = new List<Passenger>();
+
+            var itr = inputs.GetEnumerator();
+            while (itr.MoveNext())
             {
+                if (string.IsNullOrEmpty(itr.Current))
+                {
+                    yield return new PassengerGroup(passengers);
+                    passengers = new List<Passenger>();
+                    continue;
+                }
+
+                passengers.Add(new Passenger(itr.Current));
             }
 
-            return Enumerable.Empty<object>();
+            // Flush
+            if (passengers.Any())
+            {
+                yield return new PassengerGroup(passengers);
+            }
         }
     }
 }

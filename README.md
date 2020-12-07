@@ -3,7 +3,7 @@ Solutions to the [Advent of Code](https://adventofcode.com/2020) Challenges for 
 
 Written in [C#](https://docs.microsoft.com/en-us/dotnet/csharp/) and [.NET5](https://dotnet.microsoft.com/download/dotnet/5.0) using [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/).
 
-##Day01
+## Day01
 Finding target value by using a pairs of numbers. Used a hashset to see if the target difference of a sample exists.
 The second day worked very easily based on the part 1 solution.
 ```csharp
@@ -13,7 +13,7 @@ if (values.Contains(target - value))
 }
 ```
 
-##Day02
+## Day02
 Setting up the `InputStringParsers` pattern. Parsing data from the previous years was always a pain so I want to keep the step separate and simple this year.
 Working with functions, simple fun, building a validation system. Trying very hard to keep the solution method simple by creating DSL but also SIMPLE SIMPLE SIMPLE!
 ```csharp
@@ -23,10 +23,10 @@ foreach (var input in inputLine)
 }
 ```
 
-##Day03
+## Day03
 Introduced the `Grid` and started building up `Common` namespace.
 
-##Day04
+## Day04
 Working more with C# records and a domain. Started using more `IEnumerable` with `yield return` which is feeling way more comfortable this year.
 ```chsarp
 public static IEnumerable<Passport> ToPassports(this IEnumerable<string> inputs)
@@ -57,7 +57,7 @@ static Passport Passport()
 }
 ```
 
-##Day05
+## Day05
 Binary numbers! I really feel like my experience with emudev really helped identify the gimmick in this one. that the characters map directly to the binary value. I was so happy to be able to identify that when reading the problem initially. I created lots of variants cause, why not. `BinaryToIntegerWithLinqAggregate` `BinaryToIntegerWithForLoop`
 
 ```csharp

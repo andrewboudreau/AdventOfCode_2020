@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 using AdventOfCode_2020.Common;
 using AdventOfCode_2020.Week01;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,11 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
 {
+    using static AdventOfCode_2020.Common.ConsoleColorStack;
+    using static AdventOfCode_2020.Common.FiggleFontExtensions;
+    using static AdventOfCode_2020.Common.DisposableConsoleColor;
+
     public class AdventOfCode
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay { get; set; } = typeof(Day06);
+        public static Type SolutionForDay { get; set; } = typeof(Day07);
 
         public static ILoggerFactory LogFactory { get; private set; }
 
@@ -27,26 +32,24 @@ namespace AdventOfCode_2020
             var serviceProvider = scope.ServiceProvider;
 
             var logger = serviceProvider.GetRequiredService<ILogger<AdventOfCode>>();
-            var (front, back) = (Console.ForegroundColor, Console.BackgroundColor);
-
             var day = (Day00)serviceProvider.GetRequiredService(SolutionForDay);
+
             Console.WriteLine(Figgle.FiggleFonts.Doom.Render(day.Title));
+            //Console.WriteLine(RandomFiggleFont().Render(day.Title));
 
             var part1 = day.Solve();
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.ForegroundColor = ConsoleColor.White;
+            Push(ConsoleColor.White, ConsoleColor.DarkGray);
             Console.Write($"Solution:");
-            Console.ForegroundColor = front;
-            Console.BackgroundColor = back;
+            Pop();
+
             Console.WriteLine(" " + part1);
             Console.WriteLine();
 
             var part2 = day.Solve2();
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Push(ConsoleColor.Cyan, ConsoleColor.DarkGray);
             Console.Write($"Solution Part 2:");
-            Console.ForegroundColor = front;
-            Console.BackgroundColor = back;
+            Pop();
+
             Console.WriteLine(" " + part2);
             Console.WriteLine();
 

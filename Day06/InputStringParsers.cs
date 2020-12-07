@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode_2020.Week01;
 
 namespace AdventOfCode_2020
 {
@@ -22,7 +21,6 @@ namespace AdventOfCode_2020
 
                 passengers.Add(new Passenger(itr.Current));
             }
-
             // Flush
             if (passengers.Any())
             {

@@ -65,9 +65,12 @@ namespace AdventOfCode_2020
             }
         }
 
-        public void IgnoreDirectInput()
+        public void IgnoreDirectInput(bool ignore = true)
         {
-            DirectInput = null;
+            if (ignore)
+            {
+                DirectInput = null;
+            }
         }
 
         public virtual string Solve()

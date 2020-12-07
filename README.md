@@ -28,7 +28,7 @@ Introduced the `Grid` and started building up `Common` namespace.
 
 ## Day04
 Working more with C# records and a domain. Started using more `IEnumerable` with `yield return` which is feeling way more comfortable this year.
-```chsarp
+```csharp
 public static IEnumerable<Passport> ToPassports(this IEnumerable<string> inputs)
 {
     var passport = Passport();

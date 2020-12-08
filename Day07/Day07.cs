@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using AdventOfCode_2020.Common;
 using AdventOfCode_2020.LuggageBags;
 using Microsoft.Extensions.Logging;
 
@@ -13,9 +13,10 @@ namespace AdventOfCode_2020.Week01
             : base(serviceProvider, logger)
         {
             DirectInput = Day07ExampleInput.Split("\r\n");
+            //DirectInput = Day07ExampleInputAlt.Split("\r\n");
 
             ValidateDirectInputCases(DirectInput);
-            IgnoreDirectInput();
+            IgnoreDirectInput(true);
         }
 
         protected override string Solve(IEnumerable<string> inputs)
@@ -38,14 +39,42 @@ namespace AdventOfCode_2020.Week01
                 }
             }
 
+            // Remove the original target bag
             var solution = paths.Except(new[] { target }).Count();
+
             AssertExpectedResult(148, solution);
             return $"{solution} paths to {target}. {rules.Count} rules parsed.";
         }
 
         protected override string Solve2(IEnumerable<string> inputs)
         {
-            return base.Solve2(inputs);
+            var rules = inputs.ToBagRules().ToList();
+            var start = new Bag("shiny", "gold");
+            var root = rules.Single(r => r.Bag == start);
+
+            int depthFirst(int multiplier, IEnumerable<Requirement> requirements)
+            {
+                if (requirements.IsEmpty())
+                {
+                    return multiplier;
+                }
+
+                var total = multiplier;
+                foreach (var item in requirements)
+                {
+                    var children = rules.Single(r => r.Bag == item.Bag).Requirements;
+                    var result = depthFirst(item.Count, children);
+                    total += (multiplier * result);
+                }
+
+                return total;
+            }
+
+            // Remove the shiny gold bag from the total.
+            var total = depthFirst(1, root.Requirements) - 1;
+
+            AssertExpectedResult(24867, total);
+            return $"Nesting {total} bags starting with {start}.";
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)
@@ -66,5 +95,13 @@ dark olive bags contain 3 faded blue bags, 4 dotted black bags.
 vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags.";
+
+        public const string Day07ExampleInputAlt = @"shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.";
     }
 }

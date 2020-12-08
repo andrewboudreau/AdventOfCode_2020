@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Intrinsics.X86;
+
 using AdventOfCode_2020.Common;
 using AdventOfCode_2020.Week01;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

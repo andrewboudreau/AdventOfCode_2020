@@ -1,23 +1,9 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
 
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
 {
-    public record Operation(string Name, int Operands);
-
-    public enum OperationName
-    {
-        NOP,
-        ACC,
-        JMP
-    }
-
-    public record Operand(int Value);
-
-    public record Instruction(OperationName Operation, Operand Operand);
-
     public class Cpu
     {
         private readonly Instruction[] memory;
@@ -64,26 +50,6 @@ namespace AdventOfCode_2020
                 default:
                     throw new NotImplementedException(instruction.Operation.ToString());
             }
-        }
-    }
-
-
-    public static class CpuExtensions
-    {
-        public static bool IsInBounds(this int value, int min, int max)
-        {
-            return value >= min && value < max;
-        }
-
-        public static Cpu GetCpu(this IServiceProvider services, Instruction[] memory)
-        {
-            return new Cpu(memory, services.GetService<ILogger<Cpu>>());
-        }
-
-        public static Instruction[] Patch(this Instruction[] memory, int index, Func<Instruction, Instruction> update)
-        {
-            memory[index] = update(memory[index]);
-            return memory;
         }
     }
 }

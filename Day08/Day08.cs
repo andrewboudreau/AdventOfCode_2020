@@ -34,7 +34,6 @@ namespace AdventOfCode_2020.Week01
         /// </summary>
         protected override string Solve2(IEnumerable<string> inputs)
         {
-            var solution = 0;
             var source = inputs.ToInstructionSet().ToArray();
 
             for (var patchIndex = 0; patchIndex < source.Length; patchIndex++)
@@ -56,10 +55,9 @@ namespace AdventOfCode_2020.Week01
 
                 if (cpu.PC == program.Length)
                 {
-                    solution = cpu.Accumulator;
                     logger.LogDebug($"{program[patchIndex]}");
-                    AssertExpectedResult(1539, solution);
-                    return $"Acc:{solution} PC:{cpu.PC:X2} PatchIndex:{patchIndex}";
+                    AssertExpectedResult(1539, cpu.Accumulator);
+                    return $"Acc:{cpu.Accumulator} PC:{cpu.PC:X2} PatchIndex:{patchIndex}";
                 }
             }
 

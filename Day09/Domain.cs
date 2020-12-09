@@ -34,6 +34,7 @@ namespace AdventOfCode_2020
 
                 if (hash.Contains(diff))
                 {
+                    logger.LogTrace($"The {Offset} payload item {payload}, parts {value} + {diff} = {payload}.");
                     transmission.Add(payload);
                     return true;
                 }

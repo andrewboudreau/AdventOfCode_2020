@@ -55,10 +55,10 @@ namespace AdventOfCode_2020.Week02
             {
                 if (!xmas.Add(data))
                 {
-                    //data.Should().Be(127);
+                    AssertExpectedResult(127, data);
+                    return;
                 };
             }
-
         }
 
         public const string Day09ExampleInput =

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -18,7 +20,7 @@ namespace AdventOfCode_2020
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay { get; set; } = typeof(Day08);
+        public static Type SolutionForDay { get; set; } = typeof(Day09);
 
         public static ILoggerFactory LogFactory { get; private set; }
 
@@ -33,6 +35,20 @@ namespace AdventOfCode_2020
             var serviceProvider = scope.ServiceProvider;
 
             var logger = serviceProvider.GetRequiredService<ILogger<AdventOfCode>>();
+
+            if (args.Any(a => a.Contains("all", StringComparison.OrdinalIgnoreCase)))
+            {
+                foreach (var type in GetAllDays())
+                {
+                    var current = serviceProvider.GetRequiredService(type) as Day00;
+
+                    logger.LogInformation("\r\n" + Figgle.FiggleFonts.Doom.Render(current.Title));
+                    logger.LogInformation($"Part 1 Solution:{current.Solve()}");
+                    logger.LogInformation($"Part 2 Solution:{current.Solve2()}");
+                    logger.LogInformation("");
+                }
+            }
+
             var day = (Day00)serviceProvider.GetRequiredService(SolutionForDay);
 
             Console.WriteLine(Figgle.FiggleFonts.Doom.Render(day.Title));
@@ -67,10 +83,7 @@ namespace AdventOfCode_2020
                     .SetMinimumLevel(LoggingLevel);
             });
 
-            var days = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(type => type.IsSubclassOf(typeof(Day00)) && !type.IsAbstract);
-
-            foreach (var day in days)
+            foreach (var day in GetAllDays())
             {
                 services.AddTransient(day);
             }
@@ -87,6 +100,12 @@ namespace AdventOfCode_2020
         {
             var services = new ServiceCollection();
             return ConfigureServices(services);
+        }
+
+        private static IEnumerable<Type> GetAllDays()
+        {
+            return Assembly.GetExecutingAssembly().GetTypes()
+                .Where(type => type.IsSubclassOf(typeof(Day00)) && !type.IsAbstract);
         }
     }
 }

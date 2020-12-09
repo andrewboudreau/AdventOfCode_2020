@@ -31,7 +31,7 @@ namespace AdventOfCode_2020.Week01
                 var parameters = input.GetParameters();
                 var password = input.GetPassword();
 
-                logger.LogInformation($"{parameters} on Password: {password}.");
+                logger.LogTrace($"{parameters} on Password: {password}.");
                 valid += RepeatedCharacterRequirment(parameters, password);
             }
 

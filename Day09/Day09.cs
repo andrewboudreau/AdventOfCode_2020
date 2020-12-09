@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 using AdventOfCode_2020.Common;
+using FluentAssertions;
 
-namespace AdventOfCode_2020.Week01
+namespace AdventOfCode_2020.Week02
 {
     public class Day09 : Day00
     {
@@ -16,17 +18,47 @@ namespace AdventOfCode_2020.Week01
             DirectInput = Day09ExampleInput.Split("\r\n");
 
             ValidateDirectInputCases(DirectInput);
-            IgnoreDirectInput(true);
+            IgnoreDirectInput();
         }
 
         protected override string Solve(IEnumerable<string> inputs)
         {
-            var data = inputs.ToTransmission();
+            var (preamble, payload) = inputs.ToTransmission(25);
+            var xmas = GetXmaxEncryption(preamble);
+
+            var loop = 0;
+            foreach (var data in payload)
+            {
+                loop++;
+                if (!xmas.Add(data))
+                {
+                    AssertExpectedResult(50047984, data);
+                    return $"{data} and doesn't have parts in the preamble.";
+                };
+            }
+
             return "no solution";
+        }
+
+        protected XmaxEncryption GetXmaxEncryption(long[] preamble)
+        {
+            var logger = ServiceProvider.GetService<ILogger<XmaxEncryption>>();
+            return new XmaxEncryption(preamble, logger);
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)
         {
+            var (preamble, payload) = inputs.ToTransmission(5);
+            var xmas = GetXmaxEncryption(preamble);
+
+            foreach (var data in payload)
+            {
+                if (!xmas.Add(data))
+                {
+                    //data.Should().Be(127);
+                };
+            }
+
         }
 
         public const string Day09ExampleInput =

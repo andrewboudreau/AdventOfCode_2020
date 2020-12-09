@@ -6,6 +6,7 @@ using System.Reflection;
 
 using AdventOfCode_2020.Common;
 using AdventOfCode_2020.Week01;
+using AdventOfCode_2020.Week02;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

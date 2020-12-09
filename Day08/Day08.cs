@@ -4,7 +4,7 @@ using System.Linq;
 
 using Microsoft.Extensions.Logging;
 
-namespace AdventOfCode_2020.Week01
+namespace AdventOfCode_2020.Week02
 {
     public class Day08 : Day00
     {

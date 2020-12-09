@@ -85,6 +85,10 @@ namespace AdventOfCode_2020
             AssertExpectedResult(expected.ToString("N0"), actual.ToString("N0"));
         }
 
+        public virtual void AssertExpectedResult(long expected, long actual)
+        {
+            AssertExpectedResult(expected.ToString("N0"), actual.ToString("N0"));
+        }
         public virtual void AssertExpectedResult(string expected, string actual)
         {
             if (expected != actual)

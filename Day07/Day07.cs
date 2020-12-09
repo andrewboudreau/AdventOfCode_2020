@@ -60,10 +60,10 @@ namespace AdventOfCode_2020.Week01
                 }
 
                 var total = multiplier;
-                foreach (var item in requirements)
+                foreach (var branch in requirements)
                 {
-                    var children = rules.Single(r => r.Bag == item.Bag).Requirements;
-                    var result = depthFirst(item.Count, children);
+                    var children = rules.Single(r => r.Bag == branch.Bag).Requirements;
+                    var result = depthFirst(branch.Count, children);
                     total += (multiplier * result);
                 }
 

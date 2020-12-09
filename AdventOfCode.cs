@@ -18,7 +18,7 @@ namespace AdventOfCode_2020
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay { get; set; } = typeof(Day07);
+        public static Type SolutionForDay { get; set; } = typeof(Day08);
 
         public static ILoggerFactory LogFactory { get; private set; }
 

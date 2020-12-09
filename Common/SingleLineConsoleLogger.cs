@@ -38,7 +38,7 @@ namespace AdventOfCode_2020.Common
                     Console.ForegroundColor = ConsoleColor.Red;
                 }
 
-                Console.WriteLine($"{logLevel.ToString().Substring(0, 4)}: {formatter(state, exception)}");
+                Console.WriteLine($"{logLevel.ToString().Substring(0, 1)}: {formatter(state, exception)}");
 
                 Console.ForegroundColor = fore;
                 Console.BackgroundColor = back;

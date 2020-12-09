@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 using Microsoft.Extensions.Logging;
 
@@ -21,14 +20,15 @@ namespace AdventOfCode_2020
 
     public class Cpu
     {
-        private readonly Instruction[] program;
+        private readonly Instruction[] memory;
         private readonly ILogger<Cpu> logger;
+
         private int pc;
         private int acc;
 
-        public Cpu(Instruction[] program, ILogger<Cpu> logger)
+        public Cpu(Instruction[] memory, ILogger<Cpu> logger)
         {
-            this.program = program;
+            this.memory = memory;
             this.logger = logger;
         }
 
@@ -38,16 +38,16 @@ namespace AdventOfCode_2020
 
         public bool Step()
         {
-            var result = Execute(program[pc]);
+            var result = Execute(memory[pc]);
             pc += result;
 
-            var proceed = pc.IsInBounds(0, program.Length);
+            var proceed = pc.IsInBounds(0, memory.Length);
             return proceed;
         }
 
         public int Execute(Instruction instruction)
         {
-            //logger.LogDebug($"PC:{PC:X2} {instruction.Operation} {(instruction.Operand.Value > 0 ? "+" : "-")}{Math.Abs(instruction.Operand.Value)}");
+            logger.LogTrace($"PC:{PC:X2} {instruction.Operation} {(instruction.Operand.Value > 0 ? "+" : "-")}{Math.Abs(instruction.Operand.Value)}");
 
             switch (instruction.Operation)
             {
@@ -73,6 +73,17 @@ namespace AdventOfCode_2020
         public static bool IsInBounds(this int value, int min, int max)
         {
             return value >= min && value < max;
+        }
+
+        public static Cpu GetCpu(this IServiceProvider services, Instruction[] memory)
+        {
+            return new Cpu(memory, services.GetService<ILogger<Cpu>>());
+        }
+
+        public static Instruction[] Patch(this Instruction[] memory, int index, Func<Instruction, Instruction> update)
+        {
+            memory[index] = update(memory[index]);
+            return memory;
         }
     }
 }

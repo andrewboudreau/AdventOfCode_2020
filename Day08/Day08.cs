@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week01
 {
     public class Day08 : Day00
     {
-        private readonly ILoggerFactory loggerFactory;
-
-        public Day08(IServiceProvider serviceProvider, ILogger<Day08> logger, ILoggerFactory loggerFactory)
+        public Day08(IServiceProvider serviceProvider, ILogger<Day08> logger)
             : base(serviceProvider, logger)
         {
-            this.loggerFactory = loggerFactory;
-
             DirectInput = Day08ExampleInput.Split("\r\n");
-            //ValidateDirectInputCases(DirectInput);
             IgnoreDirectInput();
         }
 
         protected override string Solve(IEnumerable<string> inputs)
         {
             var program = inputs.ToInstructionSet().ToArray();
-            Cpu cpu = new(program, loggerFactory.CreateLogger<Cpu>());
+            var cpu = GetCpu(program);
 
             var visited = new HashSet<int>();
             while (visited.Add(cpu.PC) && cpu.Step())
@@ -39,6 +34,7 @@ namespace AdventOfCode_2020.Week01
         /// </summary>
         protected override string Solve2(IEnumerable<string> inputs)
         {
+            var solution = 0;
             var source = inputs.ToInstructionSet().ToArray();
 
             for (var patchIndex = 0; patchIndex < source.Length; patchIndex++)
@@ -49,9 +45,10 @@ namespace AdventOfCode_2020.Week01
                 }
 
                 var program = source.ToArray();
-                Patch(program, patchIndex, ToggleJmpNop);
+                program.Patch(patchIndex, ToggleJmpNop);
 
-                Cpu cpu = new(program, loggerFactory.CreateLogger<Cpu>());
+                Cpu cpu = GetCpu(program);
+
                 var visited = new HashSet<int>();
                 while (visited.Add(cpu.PC) && cpu.Step())
                 {
@@ -59,45 +56,19 @@ namespace AdventOfCode_2020.Week01
 
                 if (cpu.PC == program.Length)
                 {
-                    return $"Acc:{cpu.Accumulator} PC:{cpu.PC:X2}";
+                    solution = cpu.Accumulator;
+                    logger.LogDebug($"{program[patchIndex]}");
+                    AssertExpectedResult(1539, solution);
+                    return $"Acc:{solution} PC:{cpu.PC:X2} PatchIndex:{patchIndex}";
                 }
             }
 
-            //var loop = 0;
-
-            //for (int i = 0; i < program.Length; i++)
-            //{
-            //    loop++;
-
-            //    if (program[i].Operation == OperationName.ACC)
-            //    {
-            //        logger.LogDebug($"Skipping ACC @ {i}");
-            //    }
-
-            //    program[i] = ToggleJmpNop(program[i]);
-
-            //    Cpu cpu = new(program, loggerFactory.CreateLogger<Cpu>());
-            //    var visited = new HashSet<int>();
-            //    while (visited.Add(cpu.PC) && cpu.Step())
-            //    {
-            //    }
-
-            //    if (cpu.PC == program.Length)
-            //    {
-            //        logger.LogInformation($"Acc:{cpu.Accumulator} PC:{cpu.PC:X2} {ToggleJmpNop(program[i])} -> {program[i]}");
-            //        break;
-            //    }
-
-            //    program[i] = ToggleJmpNop(program[i]);
-            //}
-
-            //return $"Change instruction {loop} {program[loop]}. Looped {loop} times";
             return "no solution";
         }
 
-        public static void Patch(Instruction[] program, int index, Func<Instruction, Instruction> update)
+        protected Cpu GetCpu(Instruction[] memory)
         {
-            program[index] = update(program[index]);
+            return ServiceProvider.GetCpu(memory);
         }
 
         public static Instruction ToggleJmpNop(Instruction instruction)
@@ -114,6 +85,7 @@ namespace AdventOfCode_2020.Week01
 
             return instruction with { Operation = OperationName.JMP };
         }
+
 
         public const string Day08ExampleInput =
     @"nop +0

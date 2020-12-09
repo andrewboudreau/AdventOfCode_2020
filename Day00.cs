@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
@@ -13,7 +14,6 @@ namespace AdventOfCode_2020
         public const string FullBlock = "█";
 
         protected readonly ILogger logger;
-
 
         public Day00(IServiceProvider serviceProvider, ILogger<Day00> logger)
         {
@@ -37,6 +37,8 @@ namespace AdventOfCode_2020
         public virtual string InputFile => $@"{Day}\\{DefaultFileName}";
 
         public IServiceProvider ServiceProvider { get; }
+
+        public T GetService<T>() => ServiceProvider.GetService<T>();
 
         public IEnumerable<string> DirectInput { get; protected set; }
 

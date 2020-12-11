@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-
+using System.Linq;
 using AdventOfCode_2020.Common;
-using FluentAssertions;
 
 namespace AdventOfCode_2020.Week02
 {
@@ -18,38 +16,69 @@ namespace AdventOfCode_2020.Week02
             DirectInput = Day09ExampleInput.Split("\r\n");
 
             ValidateDirectInputCases(DirectInput);
-            IgnoreDirectInput();
+            IgnoreDirectInput(true);
         }
 
         protected override string Solve(IEnumerable<string> inputs)
         {
             var (preamble, payload) = inputs.ToTransmission(25);
-            var xmas = GetXmaxEncryption(preamble);
+            var xmas = GetXmasEncryption(preamble);
 
-            var loop = 0;
-            foreach (var data in payload)
+            foreach (var signal in payload)
             {
-                loop++;
-                if (!xmas.Add(data))
+                if (!xmas.Add(signal))
                 {
-                    AssertExpectedResult(50047984, data);
-                    return $"{data} and doesn't have parts in the preamble.";
+                    AssertExpectedResult(50_047_984, signal);
+                    return $"{signal} does not contain parts in the preamble.";
                 };
             }
 
             return "no solution";
         }
 
-        protected XmaxEncryption GetXmaxEncryption(long[] preamble)
+        protected override string Solve2(IEnumerable<string> inputs)
         {
-            var logger = ServiceProvider.GetService<ILogger<XmaxEncryption>>();
-            return new XmaxEncryption(preamble, logger);
+            long target = 50_047_984;
+            var values = inputs.ToLongs().ToArray();
+            var xmas = GetXmasEncryption(values);
+            xmas.StartWindow(2);
+
+            long sum = 0;
+            var loop = 0;
+
+            do
+            {
+                if (loop++ > 10_000)
+                    return "No solution after 10k loops";
+
+                if (sum < target)
+                    xmas.Increase();
+                else
+                    xmas.Decrease();
+
+                sum = xmas.CalculateSum();
+                logger.LogTrace($"{sum:N0} {(sum > target ? " > " : " < ")} {target:N0}");
+            } while (sum != target);
+
+            var range = xmas.SumRange.GetOffsetAndLength(values.Count());
+            var min = values.Skip(range.Offset).Take(range.Length).Min();
+            var max = values.Skip(range.Offset).Take(range.Length).Max();
+            var solution = min + max;
+
+            AssertExpectedResult(5407707, solution);
+            return $"{solution} value found by summing the largest {max} and smallest {min} values between ∑[{xmas.SumRange.Start} .. {xmas.SumRange.End}] = {target}";
+        }
+
+        protected XmasEncryption GetXmasEncryption(long[] preamble)
+        {
+            var logger = ServiceProvider.GetService<ILogger<XmasEncryption>>();
+            return new XmasEncryption(preamble, logger);
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)
         {
             var (preamble, payload) = inputs.ToTransmission(5);
-            var xmas = GetXmaxEncryption(preamble);
+            var xmas = GetXmasEncryption(preamble);
 
             foreach (var data in payload)
             {
@@ -61,8 +90,7 @@ namespace AdventOfCode_2020.Week02
             }
         }
 
-        public const string Day09ExampleInput =
-    @"35
+        public const string Day09ExampleInput = @"35
 20
 15
 25

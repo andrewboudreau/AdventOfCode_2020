@@ -1,46 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
 {
-    public class XmaxEncryption
+    public class XmasEncryption
     {
         private readonly List<long> transmission;
-        private readonly ILogger<XmaxEncryption> logger;
-
+        private readonly ILogger<XmasEncryption> logger;
         private readonly Range range;
+        private Range sumRange;
 
-        public XmaxEncryption(long[] preamble, ILogger<XmaxEncryption> logger)
+        private SortedSet<long> preamble;
+
+        public XmasEncryption(long[] preamble, ILogger<XmasEncryption> logger)
         {
             range = Range.StartAt(Index.FromEnd(preamble.Length));
             transmission = preamble.ToList();
             this.logger = logger;
+
+            UpdatePreamble();
         }
 
-        public bool Add(long payload)
-        {
-            var (Offset, Length) = range.GetOffsetAndLength(transmission.Count);
-            var hash = new HashSet<long>(transmission.Skip(Offset).Take(Length));
+        public Range SumRange => sumRange;
 
-            foreach (var value in hash)
+        public bool Add(long signal)
+        {
+            long diff = 0;
+            foreach (var value in preamble)
             {
-                var diff = payload - value;
-                if (diff == payload)
+                diff = signal - value;
+                if (diff == signal)
                 {
                     continue;
                 }
 
-                if (hash.Contains(diff))
+                if (preamble.Contains(diff))
                 {
-                    logger.LogTrace($"The {Offset} payload item {payload}, parts {value} + {diff} = {payload}.");
-                    transmission.Add(payload);
+                    logger.LogTrace($"Parts found for {signal}: {value} + {diff} = {signal}.");
+                    transmission.Add(signal);
+                    UpdatePreamble();
+
                     return true;
                 }
             }
 
+            logger.LogTrace($"Parts missing for {signal - diff}.");
             return false;
+        }
+
+        public void StartWindow(int end)
+        {
+            sumRange = Range.EndAt(Index.FromStart(end));
+        }
+
+        public void Increase()
+        {
+            sumRange = new Range(sumRange.Start, sumRange.End.Value + 1);
+        }
+
+        public void Decrease()
+        {
+            if (sumRange.Start.Value + 1 >= sumRange.End.Value)
+            {
+                throw new InvalidOperationException("start shouldn't pass end");
+            }
+
+            sumRange = new Range(sumRange.Start.Value + 1, sumRange.End.Value);
+        }
+
+        public long CalculateSum()
+        {
+            var (offset, length) = sumRange.GetOffsetAndLength(transmission.Count);
+            var sum = transmission.GetRange(offset, length).Sum();
+            
+            logger.LogTrace($"∑[{sumRange.Start.Value}..{sumRange.End.Value}] = {sum:N0}");
+            return sum;
+        }
+
+        private void UpdatePreamble()
+        {
+            var (Offset, Length) = range.GetOffsetAndLength(transmission.Count);
+            preamble = new SortedSet<long>(transmission.Skip(Offset).Take(Length));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,11 @@ namespace AdventOfCode_2020.Common
         public static int[] IntegersFromCsv(this string csv)
         {
             return csv.Split(",").Select(x => int.Parse(x.Trim())).ToArray();
+        }
+
+        public static IEnumerable<long> ToLongs(this IEnumerable<string> longPerLine)
+        {
+            return longPerLine.Select(long.Parse);
         }
 
         public static IEnumerable<int> ToInts(this IEnumerable<string> intPerLine)

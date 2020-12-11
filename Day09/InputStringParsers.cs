@@ -8,7 +8,9 @@ namespace AdventOfCode_2020
     {
         public static (long[] Preamble, long[] Payload) ToTransmission(this IEnumerable<string> inputs, int preamble)
         {
-            return (inputs.Take(preamble).Select(long.Parse).ToArray(), inputs.Skip(preamble).Select(long.Parse).ToArray());
+            return (
+                inputs.Take(preamble).Select(long.Parse).ToArray(),
+                inputs.Skip(preamble).Select(long.Parse).ToArray());
         }
     }
 }

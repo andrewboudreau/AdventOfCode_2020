@@ -13,7 +13,7 @@ namespace AdventOfCode_2020.Week02
             : base(serviceProvider, logger)
         {
             DirectInput = Day10ExampleInput.Split("\r\n");
-            IgnoreDirectInput(false);
+            IgnoreDirectInput();
         }
 
         protected override string Solve(IEnumerable<string> inputs)
@@ -22,7 +22,6 @@ namespace AdventOfCode_2020.Week02
 
             var counts = new int[4];
             counts[3] += 1; // internal device adapter is always +3 joltage difference.
-
             var joltage = 0;
             foreach (var adapter in adapters)
             {
@@ -32,53 +31,43 @@ namespace AdventOfCode_2020.Week02
             }
 
             var solution = counts[1] * counts[3];
-            //AssertExpectedResult(1656, solution);
+            AssertExpectedResult(1656, solution);
 
-            return $"{solution} found by multiplying the count of 1 and 3 difference joltage. Difference 1:{counts[1]} 2:{counts[1]} 3:{counts[1]}";
+            return $"{solution} found by multiplying the count of 1 and 3 difference joltage. Total combinations is. Difference 1:{counts[1]} 2:{counts[2]} 3:{counts[3]}";
         }
+
         protected override string Solve2(IEnumerable<string> inputs)
         {
-            var adapters = inputs.ToInts().OrderBy(x => x).ToList();
-            long total = 0;
-            var loop = 0;
-            var branches = 0;
-            Console.WriteLine();
-            int depthFirst(int joltage, IEnumerable<int> remaining)
+            var adapters = inputs.ToInts().Append(0).OrderBy(x => x).ToList();
+
+            long total = 1;
+            int branches = 0;
+            var joltage = 0;
+
+            for (var index = 1; index < adapters.Count; index++)
             {
+                var choices = adapters.Skip(index).Count(x => x - joltage <= 3);
+                joltage += adapters[index] - joltage;
+                branches++;
 
-                if (remaining.IsEmpty())
+                if (choices == 1)
                 {
-                    return 1;
-                }
-
-                Console.WriteLine($"Loop:{loop} remaining:{string.Join(',', remaining.Select(x => x.ToString()))} ");
-
-
-                var options = remaining
-                    .TakeWhile(x => x - joltage < 4)
-                    .Select((Value, Index) => (Value, Index + 1))
-                    .ToList();
-
-                if (options.Count > 1)
-                    branches++;
-
-                if (!options.Any()) throw new Exception("not right");
-
-                if(options.Count > 1)
-                {
-                    foreach (var (Value, Offset) in options)
+                    total *= branches switch
                     {
-                        total += depthFirst(joltage + Value, remaining.Skip(Offset).ToList());
-                    }
-                }
-                
+                        1 => 1,
+                        2 => 2,
+                        3 => 4,
+                        4 => 7,
+                        _ => throw new InvalidOperationException($"{branches} is an invalid length")
+                    };
 
-                return 0;
+                    logger.LogTrace($"Running Total : {total}");
+                    branches = 0;
+                }
             }
 
-            var solution = depthFirst(0, adapters);
-            return $"{total} {solution} possible adapter stacking.";
-            // 214 is too low.
+            AssertExpectedResult(56693912375296, total);
+            return $"{total} possible adapter stacking options";
         }
 
         public const string Day10ExampleInput = @"16

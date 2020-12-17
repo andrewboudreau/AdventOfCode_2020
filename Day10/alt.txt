@@ -1,0 +1,140 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.Extensions.Logging;
+using AdventOfCode_2020.Common;
+using FluentAssertions;
+
+namespace AdventOfCode_2020.Week02
+{
+    public class Day10 : Day00
+    {
+        public Day10(IServiceProvider serviceProvider, ILogger<Day10> logger)
+            : base(serviceProvider, logger)
+        {
+            DirectInput = Day10ExampleInput.Split("\r\n");
+            IgnoreDirectInput(false);
+        }
+
+        protected override string Solve(IEnumerable<string> inputs)
+        {
+            var adapters = inputs.ToInts().OrderBy(x => x).ToList();
+
+            var counts = new int[4];
+            counts[3] += 1; // internal device adapter is always +3 joltage difference.
+
+            var joltage = 0;
+            foreach (var adapter in adapters)
+            {
+                var difference = adapter - joltage;
+                counts[difference] += 1;
+                joltage += difference;
+            }
+
+            var solution = counts[1] * counts[3];
+            //AssertExpectedResult(1656, solution);
+
+            return $"{solution} found by multiplying the count of 1 and 3 difference joltage. Difference 1:{counts[1]} 2:{counts[1]} 3:{counts[1]}";
+        }
+        protected override string Solve2(IEnumerable<string> inputs)
+        {
+            var adapters = inputs.ToInts().OrderBy(x => x).ToList();
+            Console.WriteLine($"Starting Set: {string.Join(',', adapters.Select(x => x.ToString()))}");
+            long total = 0;
+            var branches = new List<int>();
+
+            
+            long depthFirst(int joltage, IEnumerable<int> remaining)
+            {
+                if (remaining.IsEmpty())
+                {
+                    Console.WriteLine($"");
+                    return 1;
+                }
+
+            Loop:
+                var options = remaining
+                    .TakeWhile(x => x - joltage < 3)
+                    .Select((Value, Index) => (Value, Index + 1))
+                    .ToList();
+
+                if (options.Count > 1)
+                {
+                    foreach (var (Value, Offset) in options)
+                    {
+                        branches.Add(Offset);
+                        var rem = remaining.Skip(Offset).ToList();
+                        //total += depthFirst(joltage + Value, remaining.Skip(Offset).ToList());
+                    }
+                }
+                else
+                {
+                    joltage += options.First().Value;
+                    remaining = remaining.Skip(1).ToList();
+                    Console.Write($"{options.First().Value} ");
+                    if (remaining.Count() > 1)
+                    {
+                        goto Loop;
+                    }
+                    else if (remaining.Count() == 1)
+                    {
+                        Console.Write($" {remaining.Single()}");
+                        return 1;
+                    }
+
+                    return 1;
+                }
+
+                return 1;
+            }
+
+            var solution = depthFirst(0, adapters);
+            return $"{total} {solution} possible adapter stacking.";
+        }
+
+        public const string Day10ExampleInput = @"16
+10
+15
+5
+1
+11
+7
+19
+6
+12
+4";
+
+        public const string Day10ExampleInput2 = @"28
+33
+18
+42
+31
+14
+46
+20
+48
+47
+24
+23
+49
+45
+19
+38
+39
+11
+1
+32
+25
+35
+8
+17
+7
+9
+4
+2
+34
+10
+3";
+    }
+}

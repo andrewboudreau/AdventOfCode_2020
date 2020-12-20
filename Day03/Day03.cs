@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 namespace AdventOfCode_2020.Week01
 {
     // Day03 Domain
-    public record Tree(Position Position) : GroundTile(1, Position, nameof(Tree));
-    public record OpenSquare(Position Position) : GroundTile(0, Position, nameof(OpenSquare));
-    public record GroundTile(int TreeCount, Position Position, string Description) : Tile(Position, Description);
+    public record Tree(Position Position) : GroundTile(1, Position, '#');
+    public record OpenSquare(Position Position) : GroundTile(0, Position, '.');
+    public abstract record GroundTile(int TreeCount, Position Position, char Display) : Tile(Position, Display, TreeCount);
 
     /// <summary>
     /// Solutions for https://adventofcode.com/2020/day/3 parts 1 and 2.
@@ -40,10 +40,14 @@ namespace AdventOfCode_2020.Week01
             var map = inputs.ToMapOfTrees();
             var slope = new Position(3, 1);
 
+            var tiles = map.TilesAlongSlope(slope, new Position(0, 0)).ToList();
+            var sum = tiles.Sum(x => x.TreeCount);
             var trees = map
                 .TilesAlongSlope(slope)
+                .TakeWhile(x => x != default)
                 .Sum(x => x.TreeCount);
 
+            AssertExpectedResult(191, trees);
             return $"{trees} trees on the slope right:{slope.X}, down:{slope.Y}.";
         }
 
@@ -73,6 +77,7 @@ namespace AdventOfCode_2020.Week01
                 logger.LogInformation($"{trees} trees found on {slope}.");
             }
 
+            AssertExpectedResult(1478615040, product);
             return $"{product} is the product of the tree counts for the {slopes.Length} slopes.";
         }
 

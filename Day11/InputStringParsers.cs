@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdventOfCode_2020.Common.DataStructures;
+using AdventOfCode_2020.Week02;
 
 namespace AdventOfCode_2020
 {
     public static partial class InputStringParsers
     {
-        public static IEnumerable<string> ToDay11Object(this IEnumerable<string> inputs)
+        public static Grid<Tile> ToSeatLayout(this IEnumerable<string> inputs)
         {
-            foreach (var item in inputs)
+            return inputs.ToGrid((position, c) =>
             {
-                yield return item;
-            }
+                return c switch
+                {
+                    Seats.NoSeat => new Tile(position, Seats.NoSeat, 0),
+                    Seats.Empty => new Tile(position, Seats.Empty, 0),
+                    Seats.Occupied => new Tile(position, Seats.Occupied, 0),
+                    _ => throw new InvalidOperationException($"Invalid input character '{c}'.")
+                };
+            });
         }
     }
 }

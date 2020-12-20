@@ -11,6 +11,7 @@ namespace AdventOfCode_2020.Week01
         public static Grid<GroundTile> ToMapOfTrees(this IEnumerable<string> inputs)
         {
             var grid = inputs.ToGrid(TileFactory);
+            grid.VerticalWrapping = true;
             return grid;
         }
 

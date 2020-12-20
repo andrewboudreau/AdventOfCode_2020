@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AdventOfCode_2020.Common.DataStructures
 {
     public record Position(int X, int Y)
     {
         public static Position Zero { get; internal set; } = new Position(0, 0);
+
+        public static Position operator +(Position a, Position b) => new(a.X + b.X, a.Y + b.Y);
+        public static Position operator -(Position a, Position b) => new(a.X - b.X, a.Y - b.Y);
     }
 
-    public record Tile(Position Position, string Description)
+    public record Tile(Position Position, char Display, int Value)
     {
-        public Tile(int x, int y, string description)
-            : this(new Position(x, y), description)
+        public Tile(int x, int y, char display, int value = 0)
+            : this(new Position(x, y), display, value)
         {
         }
     };
@@ -46,6 +50,8 @@ namespace AdventOfCode_2020.Common.DataStructures
             start = Position.Zero;
         }
 
+        public bool ThrowOutOfRangeExceptions { get; init; }
+
         public T this[int x, int y]
         {
             get
@@ -58,36 +64,61 @@ namespace AdventOfCode_2020.Common.DataStructures
         {
             get
             {
-                if (position.X < 0)
-                {
-                    throw new InvalidOperationException($"Negative X coordinates not supported. Width: {width} Length: {tiles.Length} Position:{position.Y}");
-                }
-
-                if (position.Y >= tiles.Length / width)
+                if (IsOutOfBounds(position))
                 {
                     return default;
                 }
 
-                var x = position.X % width;
-                var offset = (width * position.Y) + x;
-
-                if (offset >= tiles.Length)
+                return tiles[OffsetFrom(position)];
+            }
+            set
+            {
+                if (!IsOutOfBounds(position))
                 {
-                    throw new InvalidOperationException($"Offset beyond last position index. Offset: {offset} Rows: {tiles.Length / width} Width: {width} Length: {tiles.Length} {position}");
+                    tiles[OffsetFrom(position)] = value;
+                }
+            }
+        }
+
+        public IEnumerable<T> Tiles => tiles;
+
+        public T Current => this[current];
+
+        public bool VerticalWrapping { get; set; }
+
+        public bool IsOutOfBounds()
+        {
+            return IsOutOfBounds(current);
+        }
+
+        public bool IsOutOfBounds(Position position)
+        {
+            if (position.X < 0 || (!VerticalWrapping && position.X >= width))
+            {
+                if (ThrowOutOfRangeExceptions)
+                {
+                    throw new IndexOutOfRangeException($"X coordinate is out of bounds. Width: {width} Length: {tiles.Length} Position:{position} Height:{tiles.Length / width} VerticalWrapping:{VerticalWrapping}");
                 }
 
-                return tiles[offset];
+                return true;
             }
+
+            if (position.Y < 0 || position.Y >= tiles.Length / width)
+            {
+                if (ThrowOutOfRangeExceptions)
+                {
+                    throw new IndexOutOfRangeException($"Y coordinate out of bounds. Width: {width} Length: {tiles.Length} Position:{position} Height:{tiles.Length / width}");
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         public T MoveBy(Position position)
         {
-            current = current with
-            {
-                X = current.X + position.X,
-                Y = current.Y + position.Y
-            };
-
+            current += position;
             return this[current];
         }
 
@@ -102,6 +133,35 @@ namespace AdventOfCode_2020.Common.DataStructures
             MoveTo(start);
         }
 
-        public T Current => this[current];
+        public IEnumerable<IEnumerable<T>> GetRows()
+        {
+            int rows = width % tiles.Length;
+
+            for (var row = 0; row < rows - 1; row++)
+            {
+                yield return GetRow(row);
+            }
+        }
+
+        /// <summary>
+        /// Enumerates the tiles for a row.
+        /// </summary>
+        /// <param name="i">The 0-based index for the row.</param>
+        /// <returns>A row of tiles.</returns>
+        public IEnumerable<T> GetRow(int row)
+        {
+            var start = row * width;
+            var length = start + width;
+
+            for (var offset = start; offset < length; offset++)
+            {
+                yield return tiles[offset];
+            }
+        }
+
+        private int OffsetFrom(Position position)
+        {
+            return (width * position.Y) + position.X % width;
+        }
     }
 }

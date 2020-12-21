@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventOfCode_2020.Week02
 {
-    public class Day13 : Day00
+    public class Day14 : Day00
     {
-        public Day13(IServiceProvider serviceProvider, ILogger<Day13> logger)
+        public Day14(IServiceProvider serviceProvider, ILogger<Day14> logger)
             : base(serviceProvider, logger)
         {
-            DirectInput = Day13ExampleInput.Split("\r\n");
+            DirectInput = Day14ExampleInput.Split("\r\n");
 
             ValidateDirectInputCases(DirectInput);
             IgnoreDirectInput(false);
@@ -27,8 +27,10 @@ namespace AdventOfCode_2020.Week02
         {
         }
 
-        public const string Day13ExampleInput =
-@"939
-7,13,x,x,59,x,31,19";
+        public const string Day14ExampleInput =
+@"mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0";
     }
 }

@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace AdventOfCode_2020.Common.DataStructures
 {
-    public record Position(int X, int Y)
-    {
-        public static Position Zero { get; internal set; } = new Position(0, 0);
-
-        public static Position operator +(Position a, Position b) => new(a.X + b.X, a.Y + b.Y);
-        public static Position operator -(Position a, Position b) => new(a.X - b.X, a.Y - b.Y);
-    }
 
     public record Tile(Position Position, char Display, int Value)
     {

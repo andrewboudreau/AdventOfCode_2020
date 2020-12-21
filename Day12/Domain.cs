@@ -71,21 +71,15 @@ namespace AdventOfCode_2020
                     break;
 
                 case Left left:
-                    base.Navigate(left);
-                    waypoint.Navigate(left);
+                    RotateWayPoint(-left.Value);
                     break;
 
                 case Right right:
-                    base.Navigate(right);
-                    waypoint.Navigate(right);
+                    RotateWayPoint(right.Value);
                     break;
 
                 case Forward forward:
-                    for (var i = 0; i < forward.Value; i++)
-                    {
-                        base.Navigate(forward);
-                        waypoint.Navigate(forward);
-                    }
+                    Position += forward.Value * waypoint.Position;
                     break;
 
                 default:
@@ -95,6 +89,10 @@ namespace AdventOfCode_2020
             return this;
         }
 
+        public void RotateWayPoint(int degrees)
+        {
+            Position = Position.RotateAroundOrigin(degrees);
+        }
     }
 
     public record RouteStep(Func<Ship, (Position Position, int Rotation)> Operation)

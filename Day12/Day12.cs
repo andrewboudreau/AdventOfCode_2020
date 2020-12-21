@@ -32,8 +32,9 @@ namespace AdventOfCode_2020.Week02
 
             ship.Navigate(navigation);
 
-            //AssertExpectedResult(1007, ship.ManhattanDistance);
+            //AssertExpectedResult(0, ship.ManhattanDistance);
             return $"{ship.ManhattanDistance} from start for {ship.Position}.";
+            //15076 too low.
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)

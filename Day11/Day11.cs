@@ -102,17 +102,6 @@ namespace AdventOfCode_2020.Week02
             long last = long.MinValue;
             long count = 0;
 
-            var slopes = new Position[] {
-                new(-1,-1),
-                new( 0,-1),
-                new( 1,-1),
-                new(-1, 0),
-                new( 1, 0),
-                new(-1, 1),
-                new( 0, 1),
-                new( 1, 1),
-            };
-
             while (count != last)
             {
                 foreach (var current in grid.Tiles.Where(t => t.HasSeat()))

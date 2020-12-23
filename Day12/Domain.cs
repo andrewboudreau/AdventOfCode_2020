@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using AdventOfCode_2020.Common.DataStructures;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
@@ -95,23 +94,15 @@ namespace AdventOfCode_2020
 
     public record RouteStep(Func<Ship, (Position Position, int Rotation)> Operation)
     {
-        private static readonly ILogger<RouteStep> logger = AdventOfCode.LogFactory.CreateLogger<RouteStep>();
-
-        public (Position Position, int Rotation) Run(Ship ship)
-        {
-            logger.LogTrace($"Before: {GetType().Name} - {ship.Position} {ship.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
-            var result = Operation(ship);
-            logger.LogTrace($"After: {GetType().Name} - {result.Position} {result.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
-            return result;
-        }
+        public (Position Position, int Rotation) Run(Ship ship) => Operation(ship);
     };
 
     public record North(int Value) : RouteStep(ship => (ship.Position + new Position(0, Value), ship.Rotation));
     public record South(int Value) : RouteStep(ship => (ship.Position + new Position(0, -Value), ship.Rotation));
-    public record East(int Value) : RouteStep(ship => (ship.Position + new Position(Value, 0), ship.Rotation));
-    public record West(int Value) : RouteStep(ship => (ship.Position + new Position(-Value, 0), ship.Rotation));
+    public record East(int Value)  : RouteStep(ship => (ship.Position + new Position(Value, 0), ship.Rotation));
+    public record West(int Value)  : RouteStep(ship => (ship.Position + new Position(-Value, 0), ship.Rotation));
 
-    public record Left(int Value) : RouteStep(ship => (ship.Position, ship.Rotation - Value));
+    public record Left(int Value)  : RouteStep(ship => (ship.Position, ship.Rotation - Value));
     public record Right(int Value) : RouteStep(ship => (ship.Position, ship.Rotation + Value));
 
     public record Forward(int Value) : RouteStep(ship => ship.Rotation switch

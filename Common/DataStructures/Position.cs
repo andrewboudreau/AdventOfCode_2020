@@ -31,9 +31,9 @@ namespace AdventOfCode_2020.Common.DataStructures
             return turns switch
             {
                 0 => this,
-                1 => new Position(-Y, X),
+                1 => new Position(Y, -X),
                 2 => new Position(-X, -Y),
-                3 => new Position(Y, -X),
+                3 => new Position(-Y, X),
                 _ => throw new NotSupportedException($"Invalid number of turns {turns}.")
             };
         }
@@ -41,7 +41,8 @@ namespace AdventOfCode_2020.Common.DataStructures
         public static Position Zero { get; internal set; } = new Position(0, 0);
 
         public static Position operator +(Position a, Position b) => new(a.X + b.X, a.Y + b.Y);
-        public static Position operator -(Position a, Position b) => new(a.X - b.X, a.Y - b.Y);
+        public static Position operator -(Position a, Position b) => new(b.X - a.X, b.Y - a.Y);
+  
         public static Position operator *(int scalar, Position a) => new(a.X * scalar, a.Y * scalar);
     }
 }

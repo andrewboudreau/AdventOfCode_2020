@@ -75,8 +75,15 @@ namespace AdventOfCode_2020
             }
         }
 
+        public bool IgnorePartOne { get; set; } = false;
+
         public virtual string Solve()
         {
+            if (IgnorePartOne)
+            {
+                return "Part 1 skipped.";
+            }
+
             return Solve(ReadInput());
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using AdventOfCode_2020.Common.DataStructures;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020
@@ -50,36 +51,33 @@ namespace AdventOfCode_2020
                 .Navigate(new East(waypoint.X));
         }
 
+        public Ship Waypoint => waypoint;
+
         public override Ship Navigate(RouteStep step)
         {
             switch (step)
             {
-                case North north:
-                    waypoint.Navigate(north);
-                    break;
-
-                case South south:
-                    waypoint.Navigate(south);
-                    break;
-
-                case East east:
-                    waypoint.Navigate(east);
-                    break;
-
-                case West west:
-                    waypoint.Navigate(west);
+                case North:
+                case South:
+                case East:
+                case West:
+                    waypoint.Navigate(step);
                     break;
 
                 case Left left:
+                    Console.WriteLine($"Rotating Left {left.Value}");
                     RotateWayPoint(-left.Value);
                     break;
 
                 case Right right:
+                    Console.WriteLine($"Rotating Right {right.Value}");
                     RotateWayPoint(right.Value);
                     break;
 
                 case Forward forward:
-                    Position += forward.Value * waypoint.Position;
+                    Console.WriteLine($"Looping forward {forward.Value} times.");
+                    var (Position, _) = new ToWaypoint(forward.Value).Run(this);
+                    this.Position = Position;
                     break;
 
                 default:
@@ -91,13 +89,20 @@ namespace AdventOfCode_2020
 
         public void RotateWayPoint(int degrees)
         {
-            Position = Position.RotateAroundOrigin(degrees);
+            waypoint.Navigate(new ToPosition(waypoint.Position.RotateAroundOrigin(degrees)));
         }
     }
 
     public record RouteStep(Func<Ship, (Position Position, int Rotation)> Operation)
     {
-        public (Position Position, int Rotation) Run(Ship ship) => Operation(ship);
+        public (Position Position, int Rotation) Run(Ship ship)
+        {
+            Console.WriteLine($"Before: {GetType().Name} - {ship.Position} {ship.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
+            var result = Operation(ship);
+            Console.WriteLine($"After: {GetType().Name} - {result.Position} {result.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
+            Console.WriteLine();
+            return result;
+        }
     };
 
     public record North(int Value) : RouteStep(ship => (ship.Position + new Position(0, Value), ship.Rotation));
@@ -116,4 +121,12 @@ namespace AdventOfCode_2020
             270 => (ship.Position + new Position(-Value, 0), ship.Rotation),
             _ => throw new InvalidOperationException($"{ship.Rotation} is an unsupported ship rotation.")
         });
+
+    public record ToWaypoint(int Value) : RouteStep(ship =>
+    {
+        var waypoint = (ship as WaypointedShip).Waypoint;
+        return (ship.Position + (Value * waypoint.Position), ship.Rotation);
+    });
+
+    public record ToPosition(Position Value) : RouteStep(ship => (Value, ship.Rotation));
 }

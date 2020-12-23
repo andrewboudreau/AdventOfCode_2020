@@ -12,12 +12,14 @@ namespace AdventOfCode_2020.Week02
         {
             DirectInput = Day12ExampleInput.Split("\r\n");
 
-            ValidateDirectInputCases(DirectInput);
-            IgnoreDirectInput(false);
+            //ValidateDirectInputCases(DirectInput);
+            IgnoreDirectInput();
+            IgnorePartOne = true;
         }
 
         protected override string Solve(IEnumerable<string> inputs)
         {
+            return "skipped";
             var ship = new Ship();
             ship.Navigate(inputs.ToNavigationInstruction());
 
@@ -35,6 +37,7 @@ namespace AdventOfCode_2020.Week02
             //AssertExpectedResult(0, ship.ManhattanDistance);
             return $"{ship.ManhattanDistance} from start for {ship.Position}.";
             //15076 too low.
+            //33304 too low.
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)

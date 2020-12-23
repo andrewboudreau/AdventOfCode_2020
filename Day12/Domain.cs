@@ -65,17 +65,17 @@ namespace AdventOfCode_2020
                     break;
 
                 case Left left:
-                    Console.WriteLine($"Rotating Left {left.Value}");
+                    logger.LogTrace($"Rotating Left {left.Value}");
                     RotateWayPoint(-left.Value);
                     break;
 
                 case Right right:
-                    Console.WriteLine($"Rotating Right {right.Value}");
+                    logger.LogTrace($"Rotating Right {right.Value}");
                     RotateWayPoint(right.Value);
                     break;
 
                 case Forward forward:
-                    Console.WriteLine($"Looping forward {forward.Value} times.");
+                    logger.LogTrace($"Looping forward {forward.Value} times.");
                     var (Position, _) = new ToWaypoint(forward.Value).Run(this);
                     this.Position = Position;
                     break;
@@ -95,12 +95,13 @@ namespace AdventOfCode_2020
 
     public record RouteStep(Func<Ship, (Position Position, int Rotation)> Operation)
     {
+        private static readonly ILogger<RouteStep> logger = AdventOfCode.LogFactory.CreateLogger<RouteStep>();
+
         public (Position Position, int Rotation) Run(Ship ship)
         {
-            Console.WriteLine($"Before: {GetType().Name} - {ship.Position} {ship.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
+            logger.LogTrace($"Before: {GetType().Name} - {ship.Position} {ship.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
             var result = Operation(ship);
-            Console.WriteLine($"After: {GetType().Name} - {result.Position} {result.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
-            Console.WriteLine();
+            logger.LogTrace($"After: {GetType().Name} - {result.Position} {result.Rotation} {(ship as WaypointedShip)?.Waypoint.Position}");
             return result;
         }
     };

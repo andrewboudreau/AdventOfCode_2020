@@ -12,18 +12,16 @@ namespace AdventOfCode_2020.Week02
         {
             DirectInput = Day12ExampleInput.Split("\r\n");
 
-            //ValidateDirectInputCases(DirectInput);
+            ValidateDirectInputCases(DirectInput);
             IgnoreDirectInput();
-            IgnorePartOne = true;
         }
 
         protected override string Solve(IEnumerable<string> inputs)
         {
-            return "skipped";
             var ship = new Ship();
             ship.Navigate(inputs.ToNavigationInstruction());
 
-            //AssertExpectedResult(1007, ship.ManhattanDistance);
+            AssertExpectedResult(1007, ship.ManhattanDistance);
             return $"{ship.ManhattanDistance} from start for {ship.Position}.";
         }
         protected override string Solve2(IEnumerable<string> inputs)
@@ -34,10 +32,8 @@ namespace AdventOfCode_2020.Week02
 
             ship.Navigate(navigation);
 
-            //AssertExpectedResult(0, ship.ManhattanDistance);
+            AssertExpectedResult(41212, ship.ManhattanDistance);
             return $"{ship.ManhattanDistance} from start for {ship.Position}.";
-            //15076 too low.
-            //33304 too low.
         }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)

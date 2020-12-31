@@ -6,7 +6,7 @@ namespace AdventOfCode_2020
 {
     public static partial class InputStringParsers
     {
-        public static IEnumerable<string> ToDay13Object(this IEnumerable<string> inputs)
+        public static IEnumerable<string> ToDay16Object(this IEnumerable<string> inputs)
         {
             foreach (var item in inputs)
             {

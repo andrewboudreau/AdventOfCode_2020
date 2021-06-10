@@ -9,26 +9,27 @@ namespace AdventOfCode_2020
     {
         const short bitOffset = (sizeof(ulong) * 8) - 36;
 
-        public class InitProgram
-        {
-            private readonly List<MaskedSection> sections;
+        public static ulong To36BitValue(ulong value) => value << bitOffset >> bitOffset;
 
-            public InitProgram()
-                : this(new List<MaskedSection>())
+        public class InitProgram<T>
+        {
+            private readonly List<T> sections;
+
+            public InitProgram() : this(new List<T>())
             {
             }
 
-            public InitProgram(IEnumerable<MaskedSection> sections)
+            public InitProgram(IEnumerable<T> sections)
             {
                 this.sections = sections.ToList();
             }
 
-            public void AddMaskedSection(MaskedSection section)
+            public void AddMaskedSection(T section)
             {
                 sections.Add(section);
             }
 
-            public IEnumerable<MaskedSection> Sections => sections;
+            public IEnumerable<T> Sections => sections;
         }
 
         public class MaskedSection
@@ -47,7 +48,7 @@ namespace AdventOfCode_2020
                 turnOnMask = mask.ToMaskAsLong(x => x == '1');
                 turnOffMask = mask.ToMaskAsLong(x => x != '0');
 
-                Console.WriteLine("off : " + Convert.ToString((long)turnOffMask, 2).PadLeft(36,'0'));
+                Console.WriteLine("off : " + Convert.ToString((long)turnOffMask, 2).PadLeft(36, '0'));
                 Console.WriteLine("on  : " + Convert.ToString((long)turnOnMask, 2).PadLeft(36, '0'));
 
                 writes = new List<(int Address, ulong Value)>();
@@ -60,7 +61,7 @@ namespace AdventOfCode_2020
                 Console.WriteLine($"initial value: {value}");
 
                 //convert to 36-bit
-                value = (value << bitOffset) >> bitOffset;
+                value = To36BitValue(value);
                 value |= turnOnMask;
                 value &= turnOffMask;
 
@@ -70,9 +71,95 @@ namespace AdventOfCode_2020
             }
         }
 
-        public static InitProgram ToDay14Object(this IEnumerable<string> inputs)
+        public class MaskedSectionV2
         {
-            var program = new InitProgram();
+            private readonly List<(int Address, ulong Value)> writes;
+
+            private readonly ulong turnOnMask;
+            private List<int> fluentBits = new List<int>();
+
+            public MaskedSectionV2(string mask)
+            {
+                Console.WriteLine("mask: " + mask.Substring(bitOffset));
+
+                for (var i = 0; i < mask.Length; i++)
+                {
+                    if (mask[i] == 'X')
+                    {
+                        fluentBits.Add(i);
+                    }
+                }
+
+                Console.WriteLine("on  : " + Convert.ToString((long)turnOnMask, 2).PadLeft(36, '0'));
+
+                turnOnMask = mask.ToMaskAsLong(x => x == '1');
+                writes = new List<(int Address, ulong Value)>();
+            }
+
+            public IEnumerable<(int Address, ulong Value)> Writes()
+            {
+                var mask = new BitArray(36);
+                foreach (var write in writes)
+                {
+                    var address = (uint)write.Address | turnOnMask;
+                    mask.SetAll(false);
+                    int length = (int)Math.Pow(2, fluentBits.Count - 1);
+
+                    for (long i = 0; i < length; i++)
+                    {
+                        var binary = new BitArray(new[] { (int)i });
+
+                        for (int x = 0; i < binary.Length; i++)
+                        {
+                            mask.Set(fluentBits[x], binary[x]);
+                        }
+
+
+                        yield return ((int)address, write.Value);
+                    }
+                }
+            }
+
+            public void AddWriteOperation(int address, ulong value)
+            {
+                writes.Add((address, value));
+            }
+        }
+
+
+        public static InitProgram<MaskedSectionV2> ToValueMaskedBootrom(this IEnumerable<string> inputs)
+        {
+            var program = new InitProgram<MaskedSectionV2>();
+            MaskedSectionV2 mask = null;
+
+            foreach (var current in inputs)
+            {
+                var parts = current.Split(" = ");
+                if (parts[0] == "mask")
+                {
+                    if (mask is not null)
+                    {
+                        program.AddMaskedSection(mask);
+                    }
+
+                    mask = new MaskedSectionV2(parts[1]);
+                    continue;
+                }
+
+                mask.AddWriteOperation(int.Parse(parts[0][4..^1]), ulong.Parse(parts[1]));
+            }
+
+            if (mask.Writes().Any())
+            {
+                program.AddMaskedSection(mask);
+            }
+
+            return program;
+        }
+
+        public static InitProgram<MaskedSection> ToMemoryDispatchedBootrom(this IEnumerable<string> inputs)
+        {
+            var program = new InitProgram<MaskedSection>();
             MaskedSection mask = null;
 
             foreach (var current in inputs)
@@ -103,29 +190,25 @@ namespace AdventOfCode_2020
 
         public static ulong ToMaskAsLong(this string input, Func<char, bool> bitFactory)
         {
+            // don't forget to reverse
             var bools = input.Reverse().Select(bitFactory).ToArray();
+
             var bits = new BitArray(bools);
             var bytes = bits.ToByte();
             var number = BitConverter.ToUInt64(bytes);
 
-            Console.WriteLine("   1: " + Convert.ToString((long)number, 2).PadLeft(36, '0'));
-            number = number << bitOffset;
-            Console.WriteLine("   2: " + Convert.ToString((long)number, 2).PadLeft(64, '0'));
-            number = number >> bitOffset;
-            Console.WriteLine("   3: " + Convert.ToString((long)number, 2).PadLeft(36, '0'));
-
-            return number;
+            return To36BitValue(number);
         }
 
         public static byte[] ToByte(this BitArray bits)
         {
-            const int size = sizeof(ulong);
-            if (bits.Count != size * 8)
-            {
-                throw new ArgumentException($"Expecting exactly {size * 8} bits.", nameof(bits));
-            }
+            //const int size = sizeof(ulong);
+            //if (bits.Count != size * 8)
+            //{
+            //    throw new ArgumentException($"Expecting exactly {size * 8} bits.", nameof(bits));
+            //}
 
-            byte[] bytes = new byte[size];
+            byte[] bytes = new byte[8];
             bits.CopyTo(bytes, 0);
             return bytes;
         }

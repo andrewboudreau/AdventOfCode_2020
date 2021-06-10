@@ -7,6 +7,7 @@ using System.Reflection;
 using AdventOfCode_2020.Common;
 using AdventOfCode_2020.Week01;
 using AdventOfCode_2020.Week02;
+using AdventOfCode_2020.Week03;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ namespace AdventOfCode_2020
     {
         public const LogLevel LoggingLevel = LogLevel.Debug;
 
-        public static Type SolutionForDay { get; set; } = typeof(Day14);
+        public static Type SolutionForDay { get; set; } = typeof(Day15);
 
         public static ILoggerFactory LogFactory { get; private set; }
 
@@ -53,7 +54,7 @@ namespace AdventOfCode_2020
             var day = (Day00)serviceProvider.GetRequiredService(SolutionForDay);
 
             Console.WriteLine(Figgle.FiggleFonts.Doom.Render(day.Title));
-            //Console.WriteLine(RandomFiggleFont().Render(day.Title));
+            // Console.WriteLine(RandomFiggleFont().Render(day.Title));
 
             var part1 = day.Solve();
             Push(ConsoleColor.White, ConsoleColor.DarkGray);

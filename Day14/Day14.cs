@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Numerics;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode_2020.Week02
 {
     public class Day14 : Day00
     {
-        public static ulong[] Memory = new ulong[65_600];
-
         public Day14(IServiceProvider serviceProvider, ILogger<Day14> logger)
             : base(serviceProvider, logger)
         {
@@ -25,10 +20,10 @@ namespace AdventOfCode_2020.Week02
             var ids = new HashSet<int>();
             var values = new Dictionary<int, ulong>(600);
 
-            var program = inputs.ToDay14Object();
-            foreach (var section in program.Sections)
+            var bootrom = inputs.ToValueMaskedBootrom();
+            foreach (var section in bootrom.Sections)
             {
-                foreach (var write in section.Writes)
+                foreach (var write in section.Writes())
                 {
                     if (ids.Add(write.Address))
                     {
@@ -47,10 +42,26 @@ namespace AdventOfCode_2020.Week02
                 sum += x;
             }
 
-            AssertExpectedResult(8570568288597, sum); 
+            AssertExpectedResult(8570568288597, sum);
             return $"sum is {sum}";
         }
 
+        protected override string Solve2(IEnumerable<string> inputs)
+        {
+            return "no solution";
+            //var memory = new List<ulong>();
+
+            //var bootrom = inputs.ToMemoryDispatchedBootrom();
+            //foreach (var section in bootrom.Sections)
+            //{
+            //    foreach (var write in section.Writes)
+            //    {
+            //    }
+            //}
+
+            //long sum = 123;
+            //return $"sum is {sum}";
+        }
 
         private void ValidateDirectInputCases(IEnumerable<string> inputs)
         {
